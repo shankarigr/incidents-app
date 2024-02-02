@@ -1,0 +1,177 @@
+[
+    {
+        "kind": 1,
+        "language": "markdown",
+        "value": "# Add Cloud Foundry Deploy Configurations\n\n## Prerequisites\n\nYou have a local copy of the incident management application\n\n```sh\ngit clone https://github.com/cap-js/incidents-app.git\n```\n\n## Prepare for production\n\n1. Change the name in package.json file\n",
+        "outputs": []
+    },
+    {
+        "kind": 2,
+        "language": "shell",
+        "value": "%%extendjson \"package.json\"\n{\n   \"name\": \"incident-management\"\n}",
+        "outputs": [
+            {
+                "mime": "text/html",
+                "value": "Added cell content to file <a href=\"package.json\">package.json</a>.\n"
+            }
+        ]
+    },
+    {
+        "kind": 1,
+        "language": "markdown",
+        "value": "2. Run the following command to add configurations for SAP HANA and xsuaa",
+        "outputs": []
+    },
+    {
+        "kind": 2,
+        "language": "shell",
+        "value": "cds add hana,xsuaa --for production",
+        "outputs": [
+            {
+                "mime": "application/vnd.code.notebook.stderr",
+                "value": "Error: zsh:1: command not found: cds\n"
+            }
+        ]
+    },
+    {
+        "kind": 1,
+        "language": "markdown",
+        "value": "3. Create a directory structure `packages/deploy-int/approuter` and navigate to `approuter` folder by running the below command",
+        "outputs": []
+    },
+    {
+        "kind": 2,
+        "language": "shell",
+        "value": "mkdir packages\nmkdir packages/deploy-int\nmkdir packages/deploy-int/approuter\ncd packages/deploy-int/approuter",
+        "outputs": [
+            {
+                "mime": "application/vnd.code.notebook.stderr",
+                "value": "Error: mkdir: packages: File exists\n"
+            }
+        ]
+    },
+    {
+        "kind": 1,
+        "language": "markdown",
+        "value": "4. Create a new file `xs-app.json` in the approuter folder and add approuter configurations",
+        "outputs": []
+    },
+    {
+        "kind": 2,
+        "language": "shell",
+        "value": "%%writefile \"packages/deploy-int/approuter/xs-app.json\"\n{\n  \"welcomeFile\": \"/cp.portal\",\n  \"authenticationMethod\": \"route\",\n  \"sessionTimeout\": 30,\n  \"logout\": {\n      \"logoutEndpoint\": \"/do/logout\",\n      \"logoutPage\": \"/\"\n  },\n  \"routes\": [\n      {\n          \"source\": \"^/odata/v4/processor/(.*)$\",\n          \"destination\": \"srv-api\",\n          \"authenticationType\": \"xsuaa\"\n      }\n   ]\n}",
+        "outputs": [
+            {
+                "mime": "text/html",
+                "value": "Wrote cell content to file <a href=\"packages/deploy-int/approuter/packages/deploy-int/approuter/xs-app.json\">packages/deploy-int/approuter/packages/deploy-int/approuter/xs-app.json</a>.\n"
+            }
+        ]
+    },
+    {
+        "kind": 1,
+        "language": "markdown",
+        "value": "4. Add the intents `Incidents-display` to application manifest",
+        "outputs": []
+    },
+    {
+        "kind": 2,
+        "language": "shell",
+        "value": "%%extendjson \"manifest.json\" \"sap>app\"\n{\n\"crossNavigation\": {\n      \"inbounds\": {\n        \"intent1\": {\n          \"signature\": {\n            \"parameters\": {},\n            \"additionalParameters\": \"allowed\"\n          },\n          \"semanticObject\": \"Incidents\",\n          \"action\": \"display\"\n        }\n      }\n    }\n}",
+        "outputs": [
+            {
+                "mime": "text/html",
+                "value": "Added cell content to file <a href=\"app/incidents/webapp/manifest.json\">app/incidents/webapp/manifest.json</a>.\n"
+            }
+        ]
+    },
+    {
+        "kind": 2,
+        "language": "shell",
+        "value": "%%extendjson \"xs-app.json\"\n{\n  \"welcomeFile\": \"/index.html\",\n  \"authenticationMethod\": \"route\",\n  \"logout\": {\n    \"logoutEndpoint\": \"/do/logout\"\n  },\n  \"routes\": [\n    {\n      \"source\": \"^(.*)$\",\n      \"target\": \"$1\",\n      \"service\": \"html5-apps-repo-rt\",\n      \"authenticationType\": \"xsuaa\"\n    }\n  ]\n}",
+        "outputs": [
+            {
+                "mime": "text/html",
+                "value": "Added cell content to file <a href=\"app/incidents/webapp/xs-app.json\">app/incidents/webapp/xs-app.json</a>.\n"
+            }
+        ]
+    },
+    {
+        "kind": 1,
+        "language": "markdown",
+        "value": "## Add Portal Content\n\n1. Create a folder `portal-content` inside `packages/deploy-int` and then create a new file `package.json` inside the `portal-content` folder",
+        "outputs": []
+    },
+    {
+        "kind": 2,
+        "language": "shell",
+        "value": "%%writefile \"packages/deploy-int/portal-content/package.json\"\n{\n\t\"engines\": {\n\t\t\"node\": \">=8.0.0\"\n\t},\n\t\"name\": \"site-content\",\n\t\"version\": \"3.17.0\",\n\t\"description\": \"portal site content deployer package\",\n\t\"license\": \"Apache-2.0\",\n\t\"author\": \"Portal Team\",\n\t\"dependencies\": {\n\t\t\"@sap/portal-cf-content-deployer\": \"^4.20.0-20220206072628\"\n\t},\n\t\"scripts\": {\n\t\t\"start\": \"node --harmony node_modules/@sap/portal-cf-content-deployer/src/index.js\"\n\t}\n}",
+        "outputs": [
+            {
+                "mime": "text/html",
+                "value": "Wrote cell content to file <a href=\"packages/deploy-int/portal-content/packages/deploy-int/portal-content/package.json\">packages/deploy-int/portal-content/packages/deploy-int/portal-content/package.json</a>.\n"
+            }
+        ]
+    },
+    {
+        "kind": 1,
+        "language": "markdown",
+        "value": "2. Create a folder portal-site inside the portal-content folder.\n3. Create a new file CommonDataModel.json in the portal-site folder and add contents to the file",
+        "outputs": []
+    },
+    {
+        "kind": 2,
+        "language": "shell",
+        "value": "%%writefile \"packages/deploy-int/portal-content/portal-site/CommonDataModel.json\"\n{\n\t\"_version\": \"3.0.0\",\n\t\"identification\": {\n\t\t\"id\": \"f18acace-d86d-4b34-8233-e3be808d8ede-1587099697547\",\n\t\t\"entityType\": \"bundle\"\n\t},\n\t\"payload\": {\n\t\t\"catalogs\": [{\n\t\t\t\"_version\": \"3.0.0\",\n\t\t\t\"identification\": {\n\t\t\t\t\"id\": \"defaultCatalogId\",\n\t\t\t\t\"title\": \"{{title}}\",\n\t\t\t\t\"entityType\": \"catalog\",\n\t\t\t\t\"i18n\": \"i18n/defaultCatalogId.properties\"\n\t\t\t},\n\t\t\t\"payload\": {\n\t\t\t\t\"viz\": []\n\t\t\t}\n\t\t}],\n\t\t\"groups\": [{\n\t\t\t\"_version\": \"3.0.0\",\n\t\t\t\"identification\": {\n\t\t\t\t\"id\": \"defaultGroupId\",\n\t\t\t\t\"title\": \"{{title}}\",\n\t\t\t\t\"entityType\": \"group\",\n\t\t\t\t\"i18n\": \"i18n/defaultGroupId.properties\"\n\t\t\t},\n\t\t\t\"payload\": {\n\t\t\t\t\"viz\": [{\n\t\t\t\t\t\"id\": \"ns.incidents.display\",\n\t\t\t\t\t\"appId\": \"ns.incidents\",\n\t\t\t\t\t\"vizId\": \"Incidents-display\"\n\t\t\t\t}]\n\t\t\t}\n\t\t}],\n\t\t\"sites\": [{\n\t\t\t\"_version\": \"3.0.0\",\n\t\t\t\"identification\": {\n\t\t\t\t\"id\": \"fe74f769-a0ef-487f-8351-2b470c6cb40f-1587099697547\",\n\t\t\t\t\"entityType\": \"site\",\n\t\t\t\t\"title\": \"SAP Fiori launchpad site on Cloud Foundry\",\n\t\t\t\t\"description\": \"SAP Fiori launchpad site on Cloud Foundry, deployed from SAP Web IDE\"\n\t\t\t},\n\t\t\t\"payload\": {\n\t\t\t\t\"config\": {\n\t\t\t\t\t\"ushellConfig\": {\n\t\t\t\t\t\t\"renderers\": {\n\t\t\t\t\t\t\t\"fiori2\": {\n\t\t\t\t\t\t\t\t\"componentData\": {\n\t\t\t\t\t\t\t\t\t\"config\": {\n\t\t\t\t\t\t\t\t\t\t\"applications\": {\n\t\t\t\t\t\t\t\t\t\t\t\"Shell-home\": {}\n\t\t\t\t\t\t\t\t\t\t},\n\t\t\t\t\t\t\t\t\t\t\"enableSearch\": false,\n\t\t\t\t\t\t\t\t\t\t\"enablePersonalization\": true,\n\t\t\t\t\t\t\t\t\t\t\"enableSetTheme\": true,\n\t\t\t\t\t\t\t\t\t\t\"enableSetLanguage\": true\n\t\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t},\n\t\t\t\t\"groupsOrder\": [\"defaultGroupId\"],\n\t\t\t\t\"sap.cloud.portal\": {\n\t\t\t\t\t\"config\": {\n\t\t\t\t\t\t\"theme.id\": \"sap_fiori_3\",\n\t\t\t\t\t\t\"theme.active\": [\"sap_fiori_3\", \"sap_fiori_3_dark\", \"sap_belize_hcb\", \"sap_belize_hcw\"],\n\t\t\t\t\t\t\"ui5VersionNumber\": \"1.115.0\"\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}]\n\t}\n}",
+        "outputs": [
+            {
+                "mime": "text/html",
+                "value": "Wrote cell content to file <a href=\"packages/deploy-int/portal-content/portal-site/packages/deploy-int/portal-content/portal-site/CommonDataModel.json\">packages/deploy-int/portal-content/portal-site/packages/deploy-int/portal-content/portal-site/CommonDataModel.json</a>.\n"
+            }
+        ]
+    },
+    {
+        "kind": 1,
+        "language": "markdown",
+        "value": "4. Create a folder i18n inside the portal-site folder.\n5. Create two new files defaultCatalogId.properties and defaultGroupId.properties in the i18n folder and paste the following code snippet in their respective files:",
+        "outputs": []
+    },
+    {
+        "kind": 2,
+        "language": "shell",
+        "value": "%%writefile \"packages/deploy-int/portal-content/portal-site/i18n/defaultCatalogId.properties\"\n#XTIT\ntitle = Default Catalog Title",
+        "outputs": [
+            {
+                "mime": "text/html",
+                "value": "Wrote cell content to file <a href=\"packages/deploy-int/portal-content/portal-site/i18n/packages/deploy-int/portal-content/portal-site/i18n/defaultCatalogId.properties\">packages/deploy-int/portal-content/portal-site/i18n/packages/deploy-int/portal-content/portal-site/i18n/defaultCatalogId.properties</a>.\n"
+            }
+        ]
+    },
+    {
+        "kind": 2,
+        "language": "shell",
+        "value": "%%writefile \"packages/deploy-int/portal-content/portal-site/i18n/defaultGroupId.properties\"\n#XTIT\ntitle=Incident Management",
+        "outputs": [
+            {
+                "mime": "text/html",
+                "value": "Wrote cell content to file <a href=\"packages/deploy-int/portal-content/portal-site/i18n/packages/deploy-int/portal-content/portal-site/i18n/defaultGroupId.properties\">packages/deploy-int/portal-content/portal-site/i18n/packages/deploy-int/portal-content/portal-site/i18n/defaultGroupId.properties</a>.\n"
+            }
+        ]
+    },
+    {
+        "kind": 2,
+        "language": "shell",
+        "value": "## Add Launchpad\n\n1. Create the deployment descriptor to deploy to Cloud Foundry",
+        "outputs": []
+    },
+    {
+        "kind": 2,
+        "language": "shell",
+        "value": "%%writefile \"mta.yaml\"\n_schema-version: '3.1'\nID: incident-management\nversion: 1.0.0\ndescription: \"A simple CAP project.\"\nparameters:\n  enable-parallel-deployments: true\nbuild-parameters:\n  before-all:\n   - builder: custom\n     commands:\n        - rm -rf incident-management-ui-deployer/resources\n        - npm install --production\n        - npx -p @sap/cds-dk cds build --production\n        - mkdir gen/ui-resources\nmodules:\n  - name: incident-management-ui-resources\n    type: com.sap.application.content\n    path: gen/ui-resources\n    requires:\n      - name: incident-management-html5-repo-host\n        parameters:\n          content-target: true\n    build-parameters:\n      requires:\n        - name: incident-management\n          artifacts:\n            - ./*.zip\n          target-path: .\n  - name: incident-management\n    type: html5\n    path: app/incidents\n    build-parameters:\n      builder: custom\n      commands:\n        - npm install\n        - npx -p @ui5/cli ui5 build --dest ../../gen/app/incidents/dist --include-task=generateManifestBundle --include-task=generateCachebusterInfo\n        - bash -c \"cd ../../gen/app/incidents/dist && npx bestzip ../incidents.zip *\"\n      supported-platforms: []\n      build-result: ../../gen/app/incidents\n  - name: incident-management-portal-content-deployer\n    type: com.sap.application.content\n    path: packages/deploy-int/portal-content\n    requires:\n      - name: incident-management-portal\n        parameters:\n          content-target: true\n          service-key:\n            name: incident-management-portal-deploy-key\n            config:\n              content-endpoint: developer\n      - name: incident-management-auth\n      - name: incident-management-html5-repo-host\n      - name: incident-management-ui-resources\n  - name: incident-management-approuter\n    type: nodejs\n    path: packages/deploy-int/approuter\n    parameters:\n      memory: 128M\n    requires:\n      - name: incident-management-auth\n      - name: incident-management-portal\n      - name: incident-management-html5-repo-runtime\n      - name: srv-api\n        group: destinations\n        properties:\n          forwardAuthToken: true\n          strictSSL: true\n          name: srv-api\n          url: '~{srv-url}'\n  - name: incident-management-srv\n    type: nodejs\n    path: gen/srv\n    parameters:\n      buildpack: nodejs_buildpack\n    build-parameters:\n      builder: npm\n    provides:\n      - name: srv-api # required by consumers of CAP services (e.g. approuter)\n        properties:\n          srv-url: ${default-url}\n    requires:\n      - name: incident-management-db\n      - name: incident-management-auth\n\n  - name: incident-management-db-deployer\n    type: hdb\n    path: gen/db\n    parameters:\n      buildpack: nodejs_buildpack\n    requires:\n      - name: incident-management-db\n\nresources:\n  - name: incident-management-portal\n    type: org.cloudfoundry.managed-service\n    parameters:\n      service-plan: standard\n      service: portal\n  - name: incident-management-html5-repo-runtime\n    type: org.cloudfoundry.managed-service\n    parameters:\n      service-plan: app-runtime\n      service: html5-apps-repo\n  - name: incident-management-html5-repo-host\n    type: org.cloudfoundry.managed-service\n    parameters:\n      service-plan: app-host\n      service: html5-apps-repo\n  - name: incident-management-db\n    type: com.sap.xs.hdi-container\n    parameters:\n      service: hana\n      service-plan: hdi-shared\n  - name: incident-management-auth\n    type: org.cloudfoundry.managed-service\n    parameters:\n      service: xsuaa\n      service-plan: application\n      path: ./xs-security.json\n      config:\n        xsappname: incident-management-${org}-${space}\n        tenant-mode: dedicated",
+        "outputs": [
+            {
+                "mime": "text/html",
+                "value": "Wrote cell content to file <a href=\"mta.yaml\">mta.yaml</a>.\n"
+            }
+        ]
+    }
+]
