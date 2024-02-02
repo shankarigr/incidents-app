@@ -28,25 +28,8 @@
         "value": "cds add hana,xsuaa --for production",
         "outputs": [
             {
-                "mime": "application/vnd.code.notebook.stderr",
-                "value": "Error: zsh:1: command not found: cds\n"
-            }
-        ]
-    },
-    {
-        "kind": 1,
-        "language": "markdown",
-        "value": "3. Create a directory structure `packages/deploy-int/approuter` and navigate to `approuter` folder by running the below command",
-        "outputs": []
-    },
-    {
-        "kind": 2,
-        "language": "shell",
-        "value": "mkdir packages\nmkdir packages/deploy-int\nmkdir packages/deploy-int/approuter\ncd packages/deploy-int/approuter",
-        "outputs": [
-            {
-                "mime": "application/vnd.code.notebook.stderr",
-                "value": "Error: mkdir: packages: File exists\n"
+                "mime": "text/plain",
+                "value": "Adding feature 'xsuaa'...\nAdding feature 'hana'...\n\nSuccessfully added features to your project.\n\n"
             }
         ]
     },
@@ -63,7 +46,7 @@
         "outputs": [
             {
                 "mime": "text/html",
-                "value": "Wrote cell content to file <a href=\"packages/deploy-int/approuter/packages/deploy-int/approuter/xs-app.json\">packages/deploy-int/approuter/packages/deploy-int/approuter/xs-app.json</a>.\n"
+                "value": "Wrote cell content to file <a href=\"packages/deploy-int/approuter/xs-app.json\">packages/deploy-int/approuter/xs-app.json</a>.\n"
             }
         ]
     },
@@ -76,7 +59,7 @@
     {
         "kind": 2,
         "language": "shell",
-        "value": "%%extendjson \"manifest.json\" \"sap>app\"\n{\n\"crossNavigation\": {\n      \"inbounds\": {\n        \"intent1\": {\n          \"signature\": {\n            \"parameters\": {},\n            \"additionalParameters\": \"allowed\"\n          },\n          \"semanticObject\": \"Incidents\",\n          \"action\": \"display\"\n        }\n      }\n    }\n}",
+        "value": "%%extendjson \"app/incidents/webapp/manifest.json\" \"sap>app\"\n{\n\"crossNavigation\": {\n      \"inbounds\": {\n        \"intent1\": {\n          \"signature\": {\n            \"parameters\": {},\n            \"additionalParameters\": \"allowed\"\n          },\n          \"semanticObject\": \"Incidents\",\n          \"action\": \"display\"\n        }\n      }\n    }\n}",
         "outputs": [
             {
                 "mime": "text/html",
@@ -87,7 +70,7 @@
     {
         "kind": 2,
         "language": "shell",
-        "value": "%%extendjson \"xs-app.json\"\n{\n  \"welcomeFile\": \"/index.html\",\n  \"authenticationMethod\": \"route\",\n  \"logout\": {\n    \"logoutEndpoint\": \"/do/logout\"\n  },\n  \"routes\": [\n    {\n      \"source\": \"^(.*)$\",\n      \"target\": \"$1\",\n      \"service\": \"html5-apps-repo-rt\",\n      \"authenticationType\": \"xsuaa\"\n    }\n  ]\n}",
+        "value": "%%extendjson \"app/incidents/webapp/xs-app.json\"\n{\n  \"welcomeFile\": \"/index.html\"\n}",
         "outputs": [
             {
                 "mime": "text/html",
@@ -108,7 +91,7 @@
         "outputs": [
             {
                 "mime": "text/html",
-                "value": "Wrote cell content to file <a href=\"packages/deploy-int/portal-content/packages/deploy-int/portal-content/package.json\">packages/deploy-int/portal-content/packages/deploy-int/portal-content/package.json</a>.\n"
+                "value": "Wrote cell content to file <a href=\"packages/deploy-int/portal-content/package.json\">packages/deploy-int/portal-content/package.json</a>.\n"
             }
         ]
     },
@@ -125,7 +108,7 @@
         "outputs": [
             {
                 "mime": "text/html",
-                "value": "Wrote cell content to file <a href=\"packages/deploy-int/portal-content/portal-site/packages/deploy-int/portal-content/portal-site/CommonDataModel.json\">packages/deploy-int/portal-content/portal-site/packages/deploy-int/portal-content/portal-site/CommonDataModel.json</a>.\n"
+                "value": "Wrote cell content to file <a href=\"packages/deploy-int/portal-content/portal-site/CommonDataModel.json\">packages/deploy-int/portal-content/portal-site/CommonDataModel.json</a>.\n"
             }
         ]
     },
@@ -142,7 +125,7 @@
         "outputs": [
             {
                 "mime": "text/html",
-                "value": "Wrote cell content to file <a href=\"packages/deploy-int/portal-content/portal-site/i18n/packages/deploy-int/portal-content/portal-site/i18n/defaultCatalogId.properties\">packages/deploy-int/portal-content/portal-site/i18n/packages/deploy-int/portal-content/portal-site/i18n/defaultCatalogId.properties</a>.\n"
+                "value": "Wrote cell content to file <a href=\"packages/deploy-int/portal-content/portal-site/i18n/defaultCatalogId.properties\">packages/deploy-int/portal-content/portal-site/i18n/defaultCatalogId.properties</a>.\n"
             }
         ]
     },
@@ -153,7 +136,7 @@
         "outputs": [
             {
                 "mime": "text/html",
-                "value": "Wrote cell content to file <a href=\"packages/deploy-int/portal-content/portal-site/i18n/packages/deploy-int/portal-content/portal-site/i18n/defaultGroupId.properties\">packages/deploy-int/portal-content/portal-site/i18n/packages/deploy-int/portal-content/portal-site/i18n/defaultGroupId.properties</a>.\n"
+                "value": "Wrote cell content to file <a href=\"packages/deploy-int/portal-content/portal-site/i18n/defaultGroupId.properties\">packages/deploy-int/portal-content/portal-site/i18n/defaultGroupId.properties</a>.\n"
             }
         ]
     },
