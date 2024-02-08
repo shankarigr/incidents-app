@@ -53,7 +53,19 @@
     {
         "kind": 1,
         "language": "markdown",
-        "value": "4. Add the intents `Incidents-display` to application manifest",
+        "value": "5. Create a new file `package.json` in the approuter folder.",
+        "outputs": []
+    },
+    {
+        "kind": 2,
+        "language": "shell",
+        "value": "%%writefile \"packages/deploy-int/approuter/package.json\"\n{\n  \"name\": \"approuter\",\n  \"dependencies\": {\n    \"@sap/approuter\": \"^14.0.0\"\n  },\n  \"engines\": {\n    \"node\": \"^18.0.0\"\n  },\n  \"scripts\": {\n    \"start\": \"node node_modules/@sap/approuter/approuter.js\"\n  }\n}",
+        "outputs": []
+    },
+    {
+        "kind": 1,
+        "language": "markdown",
+        "value": "6. Add the intents `Incidents-display` to application manifest",
         "outputs": []
     },
     {
